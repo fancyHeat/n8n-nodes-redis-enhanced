@@ -1,5 +1,5 @@
 {
-  "name": "@vicenterusso/n8n-nodes-redis-enhanced",
+  "name": "@fancyheat/n8n-nodes-redis-enhanced",
   "version": "0.1.6",
   "description": "Enhanced Redis node for n8n with comprehensive operations including pub/sub, lists, sets, hashes, and TTL support",
   "keywords": [
@@ -11,14 +11,14 @@
     "key-value"
   ],
   "license": "MIT",
-  "homepage": "",
+  "homepage": "https://github.com/fancyHeat/n8n-nodes-redis-enhanced",
   "author": {
-    "name": "Vicente Russo Neto",
-    "email": "vicente.russo@gmail.com"
+    "name": "fancyHeat",
+    "email": "noreply@example.com"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/vicenterusso/n8n-nodes-redis-enhanced.git"
+    "url": "git+https://github.com/fancyHeat/n8n-nodes-redis-enhanced.git"
   },
   "engines": {
     "node": ">=20.15"

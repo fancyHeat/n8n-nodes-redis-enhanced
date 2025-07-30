@@ -213,16 +213,16 @@ export class RedisEnhanced implements INodeType {
 						action: 'Check set membership',
 					},
 					{
-						name: 'Set Remove',
-						value: 'srem',
-						description: 'Remove members from a set',
-						action: 'Remove members from set',
-					},
-					{
 						name: 'Set Members',
 						value: 'smembers',
 						description: 'Get all members of a set',
 						action: 'Get all set members',
+					},
+					{
+						name: 'Set Remove',
+						value: 'srem',
+						description: 'Remove members from a set',
+						action: 'Remove members from set',
 					},
 					{
 						name: 'Sorted Set Add',
