@@ -170,6 +170,7 @@ describe('RedisEnhanced Node', () => {
 			expect(operationValues).toContain('sadd');
 			expect(operationValues).toContain('scard');
 			expect(operationValues).toContain('sismember');
+			expect(operationValues).toContain('smembers');
 			expect(operationValues).toContain('srem');
 			expect(operationValues).toContain('strlen');
 			expect(operationValues).toContain('ttl');
@@ -179,7 +180,7 @@ describe('RedisEnhanced Node', () => {
 			expect(operationValues).toContain('zrem');
 
 			// Verify total operations count
-			expect(operationValues).toHaveLength(35);
+			expect(operationValues).toHaveLength(36);
 		});
 
 		it('should have Redis credentials configured', () => {
@@ -616,7 +617,43 @@ master_failover_state:no-failover
 		});
 	});
 
+		describe('smembers operation', () => {
+			it('should get all members of a set', async () => {
+				thisArg.getInputData.mockReturnValue([{ json: { x: 1 } }]);
+				thisArg.getNodeParameter.calledWith('operation', 0).mockReturnValue('smembers');
+				thisArg.getNodeParameter.calledWith('set', 0).mockReturnValue('myset');
+				mockClient.sMembers.mockResolvedValue(['member1', 'member2', 'member3']);
+
+				const output = await node.execute.call(thisArg);
+				expect(mockClient.sMembers).toHaveBeenCalledWith('myset');
+				expect(output[0][0].json).toEqual({ set: 'myset', members: ['member1', 'member2', 'member3'] });
+			});
+
+			it('should continue and return an error when continue on fail is enabled and an error is thrown', async () => {
+				thisArg.getInputData.mockReturnValue([{ json: { x: 1 } }]);
+				thisArg.getNodeParameter.calledWith('operation', 0).mockReturnValue('smembers');
+				thisArg.getNodeParameter.calledWith('set', 0).mockReturnValue('myset');
+				thisArg.continueOnFail.mockReturnValue(true);
+				mockClient.sMembers.mockRejectedValue(new Error('Redis error'));
+
+				const output = await node.execute.call(thisArg);
+				expect(mockClient.sMembers).toHaveBeenCalled();
+				expect(output[0][0].json).toEqual({ error: 'Redis error' });
+			});
+
+			it('should throw an error when continue on fail is disabled and an error is thrown', async () => {
+				thisArg.getInputData.mockReturnValue([{ json: { x: 1 } }]);
+				thisArg.getNodeParameter.calledWith('operation', 0).mockReturnValue('smembers');
+				thisArg.getNodeParameter.calledWith('set', 0).mockReturnValue('myset');
+				mockClient.sMembers.mockRejectedValue(new Error('Redis error'));
+
+				await expect(node.execute.call(thisArg)).rejects.toThrow(NodeOperationError);
+				expect(mockClient.sMembers).toHaveBeenCalled();
+				expect(mockClient.quit).toHaveBeenCalled();
+			});
+		});
+
 		// Additional operation tests would continue here...
-		// This provides the comprehensive pattern for testing all 35 operations
+		// This provides the comprehensive pattern for testing all 36 operations
 	});
 });

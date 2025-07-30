@@ -219,6 +219,12 @@ export class RedisEnhanced implements INodeType {
 						action: 'Remove members from set',
 					},
 					{
+						name: 'Set Members',
+						value: 'smembers',
+						description: 'Get all members of a set',
+						action: 'Get all set members',
+					},
+					{
 						name: 'Sorted Set Add',
 						value: 'zadd',
 						description: 'Add members to a sorted set',
@@ -933,7 +939,7 @@ export class RedisEnhanced implements INodeType {
 				type: 'string',
 				displayOptions: {
 					show: {
-						operation: ['sadd', 'srem', 'sismember', 'scard'],
+						operation: ['sadd', 'srem', 'sismember', 'scard', 'smembers'],
 					},
 				},
 				default: '',
@@ -1164,7 +1170,7 @@ export class RedisEnhanced implements INodeType {
 				'delete', 'get', 'keys', 'set', 'incr', 'publish', 'push', 'pop',
 				'exists', 'mget', 'mset', 'scan', 'ttl', 'persist', 'expireat',
 				'getset', 'append', 'strlen', 'blpop', 'brpop', 'llen',
-				'sadd', 'srem', 'sismember', 'scard',
+				'sadd', 'srem', 'sismember', 'scard', 'smembers',
 				'zadd', 'zrange', 'zrem', 'zcard',
 				'hlen', 'hkeys', 'hvals', 'hexists', 'eval'
 			].includes(operation)
@@ -1392,6 +1398,10 @@ export class RedisEnhanced implements INodeType {
 						const set = this.getNodeParameter('set', itemIndex) as string;
 						const cardinality = await client.sCard(set);
 						returnItems.push({ json: { set, cardinality } });
+					} else if (operation === 'smembers') {
+						const set = this.getNodeParameter('set', itemIndex) as string;
+						const members = await client.sMembers(set);
+						returnItems.push({ json: { set, members } });
 					} else if (operation === 'zadd') {
 						const sortedSet = this.getNodeParameter('sortedSet', itemIndex) as string;
 						const scoreMembers = this.getNodeParameter('scoreMembers', itemIndex) as string;
